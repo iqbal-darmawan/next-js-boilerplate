@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum userStatus {
+  Active
+  Inactive
+}
+
+enum roleStatus {
+  Active
+  Inactive
+}
+
+enum userRole {
+  SuperAdmin
+  Manager
+  Sales
+  AdminSales
+}
+
+model RoleHasPermission {
+  permission_id Int
+  role_id       Int
+
+  permission Permission @relation(fields: [permission_id], references: [id])
+  role       Role       @relation(fields: [role_id], references: [id])
+
+  @@id([permission_id, role_id])
+  @@map("role_has_permissions")
+}
+
+model Permission {
+  id         Int          @id @default(autoincrement())
+  name       String
+  title      String
+  parent_id  Int?
+  parent     Permission?  @relation("PermissionHierarchy", fields: [parent_id], references: [id])
+  children   Permission[] @relation("PermissionHierarchy")
+  created_at DateTime     @default(now())
+  updated_at DateTime     @default(now())
+
+  roles RoleHasPermission[]
+
+  @@map("permissions")
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  title       String
+  description String
+  status      roleStatus
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+
+  users       User[]
+  permissions RoleHasPermission[]
+
+  @@map("roles")
+}
+
+model User {
+  id            String     @id @default(uuid())
+  role_id       Int
+  name          String
+  username      String     @unique
+  password      String
+  email         String     @unique
+  photo_profile String?
+  status        userStatus
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  role Role? @relation(fields: [role_id], references: [id])
+
+  @@map("users")
+}
