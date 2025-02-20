@@ -6,8 +6,7 @@ export default function Users() {
   return (
     <>
       <div className="container mx-auto py-10">
-
-        <UsersListTable/>
+        <UsersListTable />
       </div>
     </>
   );

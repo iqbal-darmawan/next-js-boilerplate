@@ -4,6 +4,8 @@ import { DataTable } from "@/modules/users/components/table/data-table";
 import { useGetAllUsersQuery } from "../../services/api/userSlice";
 import { columns } from "./columns";
 import { useEffect, useState } from "react";
+import { Button } from "@/shared/components/ui/button";
+import Link from "next/link";
 
 export default function UsersListTable() {
   const [page, setPage] = useState(1);
@@ -61,9 +63,16 @@ export default function UsersListTable() {
 
   return (
     <div className="container mx-auto w-full">
-      <div className="flex flex-col justify-center mb-5">
-        <h5 className="text-2xl font-bold text-gray-900">List Users</h5>
-        <h5 className="text-lg font-semibold text-gray-900">Total Users: {data?.totalCount}</h5>
+      <div className="flex justify-between">
+        <div className="flex flex-col justify-center mb-5">
+          <h5 className="text-2xl font-bold text-gray-900">List Users</h5>
+          <h5 className="text-lg font-semibold text-gray-900">
+            Total Users: {data?.totalCount}
+          </h5>
+        </div>
+        <Button asChild>
+          <Link href="users/create">Add User</Link>
+        </Button>
       </div>
       {/* Search & Pagination Controls */}
       <div className="flex justify-between items-center py-2">
